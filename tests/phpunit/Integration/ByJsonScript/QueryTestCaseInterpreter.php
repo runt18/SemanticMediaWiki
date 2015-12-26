@@ -90,6 +90,15 @@ class QueryTestCaseInterpreter {
 	}
 
 	/**
+	 * @since 2.4
+	 *
+	 * @return DIWikiPage|null
+	 */
+	public function getSubject() {
+		return isset( $this->contents['subject'] ) ? DIWikiPage::newFromText( $this->contents['subject'] ) : null;
+	}
+
+	/**
 	 * @since 2.2
 	 *
 	 * @return array
@@ -155,6 +164,15 @@ class QueryTestCaseInterpreter {
 	 */
 	public function getExpectedCount() {
 		return isset( $this->contents['queryresult']['count'] ) ? (int)$this->contents['queryresult']['count'] : 0;
+	}
+
+	/**
+	 * @since 2.4
+	 *
+	 * @return boolean
+	 */
+	public function isFromCache() {
+		return isset( $this->contents['queryresult']['isFromCache'] ) ? (bool)$this->contents['queryresult']['isFromCache'] : null;
 	}
 
 	/**

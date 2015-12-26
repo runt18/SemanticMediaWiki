@@ -75,6 +75,7 @@
 		}
 	],
 	"settings": {
+		"smwgEmbeddedQueryResultCacheType": false,
 		"smwgPageSpecialProperties": [ "_MDAT" ]
 	},
 	"meta": {

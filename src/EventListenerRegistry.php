@@ -6,6 +6,7 @@ use Onoi\EventDispatcher\EventListenerCollection;
 use Onoi\EventDispatcher\EventDispatcherFactory;
 use SMWExporter as Exporter;
 use SMW\Query\QueryComparator;
+use SMW\DIWikiPage;
 
 /**
  * @license GNU GPL v2+
@@ -40,15 +41,48 @@ class EventListenerRegistry implements EventListenerCollection {
 
 	private function addListenersToCollection() {
 
+
 		$this->eventListenerCollection->registerCallback(
 			'factbox.cache.delete', function( $dispatchContext ) {
 
+				$applicationFactory = ApplicationFactory::getInstance();
+
 				$title = $dispatchContext->get( 'title' );
-				$cache = ApplicationFactory::getInstance()->getCache();
+				$cache = $applicationFactory->getCache();
 
 				$cache->delete(
-					ApplicationFactory::getInstance()->newCacheFactory()->getFactboxCacheKey( $title->getArticleID() )
+					$applicationFactory->newCacheFactory()->getFactboxCacheKey( $title->getArticleID() )
 				);
+			}
+		);
+
+		/**
+		 * Listen to when an ArticlePurge event is emitted
+		 */
+		$this->eventListenerCollection->registerCallback(
+			'cache.delete.on.article.purge', function( $dispatchContext ) {
+
+				$applicationFactory = ApplicationFactory::getInstance();
+
+				$title = $dispatchContext->get( 'title' );
+				$cache = $applicationFactory->getCache();
+				$cacheFactory = $applicationFactory->newCacheFactory();
+
+				if ( $applicationFactory->getSettings()->get( 'smwgFactboxCacheRefreshOnPurge' ) ) {
+					$cache->delete(
+						$cacheFactory->getFactboxCacheKey( $title->getArticleID() )
+					);
+				}
+
+				if ( $applicationFactory->getSettings()->get( 'smwgEmbeddedQueryResultCacheRefreshOnPurge' ) ) {
+
+					$embeddedQueryResultCache = $cacheFactory->newEmbeddedQueryResultCache(
+						$applicationFactory->getSettings()->get( 'smwgEmbeddedQueryResultCacheType' ),
+						$applicationFactory->getSettings()->get( 'smwgEmbeddedQueryResultCacheLifetime' )
+					);
+
+					$embeddedQueryResultCache->purgeCacheBySubject( DIWikiPage::newFromTitle( $title ) );
+				}
 			}
 		);
 

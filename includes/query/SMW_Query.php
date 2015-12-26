@@ -88,7 +88,7 @@ class SMWQuery {
 	 *
 	 * @param DIWikiPage $subject
 	 */
-	public function setSubject( DIWikiPage $subject ) {
+	public function setSubject( DIWikiPage $subject = null ) {
 		$this->subject = $subject;
 	}
 
@@ -322,7 +322,7 @@ class SMWQuery {
 		// @2.4 Keep the queryID stable with previous versions unless
 		// a query source is selected. The "same" query executed on different
 		// remote systems requires a different queryID
-		if ( $this->querySource !== '' ) {
+		if ( $this->querySource !== '' && $this->querySource !== null ) {
 			$serialized['parameters']['source'] = $this->querySource;
 		}
 

@@ -98,6 +98,7 @@ class QueryTestCaseProcessor extends \PHPUnit_Framework_TestCase {
 		$query->setOffset( $queryTestCaseInterpreter->getOffset() );
 		$query->setExtraPrintouts( $queryTestCaseInterpreter->getExtraPrintouts() );
 		$query->setSortKeys( $queryTestCaseInterpreter->getSortKeys() );
+		$query->setSubject( $queryTestCaseInterpreter->getSubject() );
 
 		if ( $queryTestCaseInterpreter->isRequiredToClearStoreCache() ) {
 			$this->getStore()->clear();
@@ -122,6 +123,14 @@ class QueryTestCaseProcessor extends \PHPUnit_Framework_TestCase {
 			$queryResult->getErrors(),
 			'Failed asserting error count ' . $queryTestCaseInterpreter->isAbout()
 		);
+
+		if ( $queryTestCaseInterpreter->isFromCache() !== null ) {
+			$this->assertEquals(
+				$queryTestCaseInterpreter->isFromCache(),
+				$queryResult->isFromCache(),
+				'Failed asserting isFromCache for ' . $queryTestCaseInterpreter->isAbout()
+			);
+		}
 
 		if ( $queryTestCaseInterpreter->getExpectedErrorCount() > 0 ) {
 			return null;

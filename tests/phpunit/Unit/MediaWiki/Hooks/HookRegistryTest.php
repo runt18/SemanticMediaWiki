@@ -382,6 +382,10 @@ class HookRegistryTest extends \PHPUnit_Framework_TestCase {
 
 		$handler = 'ArticlePurge';
 
+		$this->title->expects( $this->any() )
+			->method( 'getNamespace' )
+			->will( $this->returnValue( NS_MAIN ) );
+
 		$wikiPage = $this->getMockBuilder( '\WikiPage' )
 			->disableOriginalConstructor()
 			->getMock();

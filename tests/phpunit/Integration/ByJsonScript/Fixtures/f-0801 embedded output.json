@@ -44,6 +44,7 @@
 		}
 	],
 	"settings": {
+		"smwgEmbeddedQueryResultCacheType": false,
 		"smwgPageSpecialProperties": [ "_MDAT" ],
 		"smwgNamespacesWithSemanticLinks": {
 			"NS_MAIN": true,

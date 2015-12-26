@@ -19,6 +19,20 @@ use SMW\DIWikiPage;
  */
 class EventListenerRegistryTest extends \PHPUnit_Framework_TestCase {
 
+	private $applicationFactory;
+
+	protected function setUp() {
+		parent::setUp();
+
+		$this->applicationFactory = ApplicationFactory::getInstance();
+	}
+
+	protected function tearDown() {
+		ApplicationFactory::getInstance()->clear();
+
+		parent::tearDown();
+	}
+
 	public function testCanConstruct() {
 
 		$eventListenerCollection = $this->getMockBuilder( '\Onoi\EventDispatcher\EventListenerCollection' )
@@ -82,7 +96,7 @@ class EventListenerRegistryTest extends \PHPUnit_Framework_TestCase {
 			->method( 'getInProperties' )
 			->will( $this->returnValue( array() ) );
 
-		ApplicationFactory::getInstance()->registerObject( 'Store', $store );
+		$this->applicationFactory->registerObject( 'Store', $store );
 
 		$dispatchContext = EventDispatcherFactory::getInstance()->newDispatchContext();
 		$dispatchContext->set( 'subject', new DIWikiPage( 'Foo', NS_MAIN ) );
@@ -104,12 +118,37 @@ class EventListenerRegistryTest extends \PHPUnit_Framework_TestCase {
 			->method( 'getArticleID' )
 			->will( $this->returnValue( 42 ) );
 
-		ApplicationFactory::getInstance()->registerObject( 'Cache', $cache );
+		$this->applicationFactory->registerObject( 'Cache', $cache );
 
 		$dispatchContext = EventDispatcherFactory::getInstance()->newDispatchContext();
 		$dispatchContext->set( 'title', $title );
 
 		$this->assertListenerExecuteFor( 'factbox.cache.delete', $instance, $dispatchContext );
+	}
+
+	public function verifyArticlePurgeEvent( EventListenerCollection $instance ) {
+
+		$cache = $this->getMockBuilder( '\Onoi\Cache\Cache' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$title = $this->getMockBuilder( '\Title' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$title->expects( $this->atLeastOnce() )
+			->method( 'getArticleID' )
+			->will( $this->returnValue( 42 ) );
+
+		$this->applicationFactory->registerObject( 'Cache', $cache );
+
+		$this->applicationFactory->getSettings()->set( 'smwgFactboxCacheRefreshOnPurge', true );
+		$this->applicationFactory->getSettings()->set( 'smwgEmbeddedQueryResultCacheRefreshOnPurge', true );
+
+		$dispatchContext = EventDispatcherFactory::getInstance()->newDispatchContext();
+		$dispatchContext->set( 'title', $title );
+
+		$this->assertListenerExecuteFor( 'cache.delete.on.article.purge', $instance, $dispatchContext );
 	}
 
 	private function assertListenerExecuteFor( $eventName, $instance, $dispatchContext = null ) {

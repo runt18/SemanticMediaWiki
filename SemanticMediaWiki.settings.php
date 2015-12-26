@@ -901,8 +901,47 @@ $GLOBALS['smwgPropertyDependencyDetectionBlacklist'] = array( '_MDAT', '_SOBJ', 
 ##
 
 ###
+# Support for a separate cache instance in order to store subjects that were fetched
+# from the QueryEngine (not the string result generated from a result printer)
+# and improve general page-loading time for articles that contain embedded queries
+# and decrease server load on query requests due to subjects (as answer to a
+# query) being served from cache instead of running a live DB/SPARQL query.
+#
+# It is suggested that `smwgEnabledQueryDependencyLinksStore` is enabled to make
+# use of the automatic query results update (and hereof the invalidation of the
+# cache).
+#
+# CACHE_NONE as default means that this feature is disabled
+#
+# @since 2.4 (experimental)
+#
+# @default: CACHE_NONE, users need to actively enable it in order
+# to make use of it
+##
+$GLOBALS['smwgEmbeddedQueryResultCacheType'] = CACHE_NONE;
+##
+
+###
+# Specifies the lifetime of results fetched from a query for when
+# `smwgEmbeddedQueryResultCacheType` is enabled.
+#
+# @since 2.4
+##
+$GLOBALS['smwgEmbeddedQueryResultCacheLifetime'] = 60 * 60 * 24; // a day
+##
+
+###
+# Allows to force a manual refresh of the cache when the action=purge is event is
+# emitted.
+#
+# @since 2.4
+##
+$GLOBALS['smwgEmbeddedQueryResultCacheRefreshOnPurge'] = true;
+##
+
+###
 # The setting is introduced the keep backwards compatibility with existing Rdf/Turtle
-# exports. The `aux` marker is epxected only used to be used for selected properties
+# exports. The `aux` marker is expected to be used only for selected properties
 # to generate a helper value and not for any other predefined property.
 #
 # Any property that does not explicitly require an auxiliary value (such `_dat`/

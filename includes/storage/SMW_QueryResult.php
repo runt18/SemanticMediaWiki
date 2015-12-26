@@ -32,7 +32,7 @@ class SMWQueryResult {
 	/**
 	 * Array of SMWPrintRequest objects, indexed by their natural hash keys
 	 *
-*@var PrintRequest[]
+	 * @var PrintRequest[]
 	 */
 	protected $mPrintRequests;
 
@@ -60,6 +60,11 @@ class SMWQueryResult {
 	 * @var integer|null
 	 */
 	private $countValue;
+
+	/**
+	 * @var boolean
+	 */
+	private $isFromCache = false;
 
 	/**
 	 * Initialise the object with an array of SMWPrintRequest objects, which
@@ -206,6 +211,24 @@ class SMWQueryResult {
 	 */
 	public function getCountValue() {
 		return $this->countValue;
+	}
+
+	/**
+	 * @since  2.4
+	 *
+	 * @param boolean $isFromCache
+	 */
+	public function setFromCache( $isFromCache ) {
+		$this->isFromCache = (bool)$isFromCache;
+	}
+
+	/**
+	 * @since  2.4
+	 *
+	 * @return boolean
+	 */
+	public function isFromCache() {
+		return $this->isFromCache;
 	}
 
 	/**

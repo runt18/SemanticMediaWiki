@@ -111,4 +111,34 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
+	public function testCanConstructEmbeddedQueryResultCache() {
+
+		$instance = new CacheFactory( 'hash' );
+
+		$this->assertInstanceOf(
+			'\SMW\EmbeddedQueryResultCache',
+			$instance->newEmbeddedQueryResultCache( 'hash' )
+		);
+	}
+
+	public function testCanConstructEmbeddedQueryResultBlobstore() {
+
+		$instance = new CacheFactory( 'hash' );
+
+		$this->assertInstanceOf(
+			'\Onoi\BlobStore\BlobStore',
+			$instance->newEmbeddedQueryResultBlobstore( 'hash' )
+		);
+	}
+
+	public function testCanConstructValueLookupBlobstore() {
+
+		$instance = new CacheFactory( 'hash' );
+
+		$this->assertInstanceOf(
+			'\Onoi\BlobStore\BlobStore',
+			$instance->newValueLookupBlobstore( 'hash' )
+		);
+	}
+
 }

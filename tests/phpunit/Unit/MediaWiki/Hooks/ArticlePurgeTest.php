@@ -79,6 +79,11 @@ class ArticlePurgeTest extends \PHPUnit_Framework_TestCase {
 			$setup['smwgFactboxCacheRefreshOnPurge']
 		);
 
+		$this->applicationFactory->getSettings()->set(
+			'smwgEmbeddedQueryResultCacheRefreshOnPurge',
+			false
+		);
+
 		$instance = new ArticlePurge();
 
 		$cacheFactory = $this->applicationFactory->newCacheFactory();

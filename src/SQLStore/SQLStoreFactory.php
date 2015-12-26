@@ -37,9 +37,9 @@ class SQLStoreFactory {
 	private $store;
 
 	/**
-	 * @var Settings
+	 * @var ApplicationFactory
 	 */
-	private $settings;
+	private $applicationFactory;
 
 	/**
 	 * @since 2.2
@@ -48,7 +48,7 @@ class SQLStoreFactory {
 	 */
 	public function __construct( SMWSQLStore3 $store ) {
 		$this->store = $store;
-		$this->settings = ApplicationFactory::getInstance()->getSettings();
+		$this->applicationFactory = ApplicationFactory::getInstance();
 	}
 
 	/**
@@ -146,8 +146,8 @@ class SQLStoreFactory {
 
 		return $this->newCachedListLookup(
 			$usageStatisticsListLookup,
-			$this->settings->get( 'smwgStatisticsCache' ),
-			$this->settings->get( 'smwgStatisticsCacheExpiry' )
+			$this->applicationFactory->getSettings()->get( 'smwgStatisticsCache' ),
+			$this->applicationFactory->getSettings()->get( 'smwgStatisticsCacheExpiry' )
 		);
 	}
 
@@ -168,8 +168,8 @@ class SQLStoreFactory {
 
 		return $this->newCachedListLookup(
 			$propertyUsageListLookup,
-			$this->settings->get( 'smwgPropertiesCache' ),
-			$this->settings->get( 'smwgPropertiesCacheExpiry' )
+			$this->applicationFactory->getSettings()->get( 'smwgPropertiesCache' ),
+			$this->applicationFactory->getSettings()->get( 'smwgPropertiesCacheExpiry' )
 		);
 	}
 
@@ -190,8 +190,8 @@ class SQLStoreFactory {
 
 		return $this->newCachedListLookup(
 			$unusedPropertyListLookup,
-			$this->settings->get( 'smwgUnusedPropertiesCache' ),
-			$this->settings->get( 'smwgUnusedPropertiesCacheExpiry' )
+			$this->applicationFactory->getSettings()->get( 'smwgUnusedPropertiesCache' ),
+			$this->applicationFactory->getSettings()->get( 'smwgUnusedPropertiesCacheExpiry' )
 		);
 	}
 
@@ -206,14 +206,14 @@ class SQLStoreFactory {
 
 		$undeclaredPropertyListLookup = new UndeclaredPropertyListLookup(
 			$this->store,
-			$this->settings->get( 'smwgPDefaultType' ),
+			$this->applicationFactory->getSettings()->get( 'smwgPDefaultType' ),
 			$requestOptions
 		);
 
 		return $this->newCachedListLookup(
 			$undeclaredPropertyListLookup,
-			$this->settings->get( 'smwgWantedPropertiesCache' ),
-			$this->settings->get( 'smwgWantedPropertiesCacheExpiry' )
+			$this->applicationFactory->getSettings()->get( 'smwgWantedPropertiesCache' ),
+			$this->applicationFactory->getSettings()->get( 'smwgWantedPropertiesCacheExpiry' )
 		);
 	}
 
@@ -228,7 +228,7 @@ class SQLStoreFactory {
 	 */
 	public function newCachedListLookup( ListLookup $listLookup, $useCache, $cacheExpiry ) {
 
-		$cacheFactory = ApplicationFactory::getInstance()->newCacheFactory();
+		$cacheFactory = $this->applicationFactory->newCacheFactory();
 
 		$cacheOptions = $cacheFactory->newCacheOptions( array(
 			'useCache' => $useCache,
@@ -265,29 +265,14 @@ class SQLStoreFactory {
 		$circularReferenceGuard = new CircularReferenceGuard( 'vl:store' );
 		$circularReferenceGuard->setMaxRecursionDepth( 2 );
 
-		$cacheFactory = ApplicationFactory::getInstance()->newCacheFactory();
-
-		$blobStore = new BlobStore(
-			'smw:vl:store',
-			$cacheFactory->newMediaWikiCompositeCache( $GLOBALS['smwgValueLookupCacheType'] )
-		);
-
-		// If CACHE_NONE is selected, disable the usage
-		$blobStore->setUsageState(
-			$GLOBALS['smwgValueLookupCacheType'] !== CACHE_NONE
-		);
-
-		$blobStore->setExpiryInSeconds(
+		$valueLookupBlobstore = $this->applicationFactory->newCacheFactory()->newValueLookupBlobstore(
+			$GLOBALS['smwgValueLookupCacheType'],
 			$GLOBALS['smwgValueLookupCacheLifetime']
-		);
-
-		$blobStore->setNamespacePrefix(
-			$cacheFactory->getCachePrefix()
 		);
 
 		$cachedValueLookupStore = new CachedValueLookupStore(
 			$this->store,
-			$blobStore
+			$valueLookupBlobstore
 		);
 
 		$cachedValueLookupStore->setValueLookupFeatures(
@@ -320,11 +305,11 @@ class SQLStoreFactory {
 		$propertyTableInfoFetcher = new PropertyTableInfoFetcher();
 
 		$propertyTableInfoFetcher->setCustomFixedPropertyList(
-			$this->settings->get( 'smwgFixedProperties' )
+			$this->applicationFactory->getSettings()->get( 'smwgFixedProperties' )
 		);
 
 		$propertyTableInfoFetcher->setCustomSpecialPropertyList(
-			$this->settings->get( 'smwgPageSpecialProperties' )
+			$this->applicationFactory->getSettings()->get( 'smwgPageSpecialProperties' )
 		);
 
 		return $propertyTableInfoFetcher;
