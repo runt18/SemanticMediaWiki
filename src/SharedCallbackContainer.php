@@ -115,10 +115,12 @@ class SharedCallbackContainer implements CallbackContainer {
 		/**
 		 * @var CacheFactory
 		 */
-		$callbackLoader->registerExpectedReturnType( 'CacheFactory', '\SMW\CacheFactory' );
+		$callbackLoader->registerCallback( 'CacheFactory', function( $mainCacheType = null ) use ( $callbackLoader ) {
+			$callbackLoader->registerExpectedReturnType( 'CacheFactory', '\SMW\CacheFactory' );
 
-		$callbackLoader->registerCallback( 'CacheFactory', function( $mainCacheType = null ) {
-			return new CacheFactory( $mainCacheType );
+			return new CacheFactory(
+				$mainCacheType === null ? $callbackLoader->load( 'Settings' )->get( 'smwgCacheType' ) : $mainCacheType
+			);
 		} );
 
 		/**

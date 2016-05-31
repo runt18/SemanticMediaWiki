@@ -33,18 +33,18 @@ class ArticlePurge {
 		$settings = $applicationFactory->getSettings();
 
 		$cache = $applicationFactory->getCache();
-		$cacheFactory = $applicationFactory->newCacheFactory();
+		$cacheFactory = $applicationFactory->getCacheFactory();
 
 		if ( $pageId > 0 ) {
 			$cache->save(
-				$cacheFactory->getPurgeCacheKey( $pageId ),
+				$cacheFactory->getAuPurgeCacheKeyBy( $pageId ),
 				$settings->get( 'smwgAutoRefreshOnPurge' )
 			);
 		}
 
 		if ( $settings->get( 'smwgFactboxCacheRefreshOnPurge' ) ) {
 			$cache->delete(
-				$cacheFactory->getFactboxCacheKey( $pageId )
+				$cacheFactory->getFactboxCacheKeyBy( $pageId )
 			);
 		}
 

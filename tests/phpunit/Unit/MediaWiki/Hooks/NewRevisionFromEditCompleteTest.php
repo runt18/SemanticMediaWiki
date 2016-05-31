@@ -7,7 +7,6 @@ use Revision;
 use SMW\ApplicationFactory;
 use SMW\DIProperty;
 use SMW\MediaWiki\Hooks\NewRevisionFromEditComplete;
-use SMW\Settings;
 use SMW\Tests\Utils\Validators\SemanticDataValidator;
 use Title;
 use WikiPage;
@@ -70,10 +69,7 @@ class NewRevisionFromEditCompleteTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testProcess( $parameters, $expected ) {
 
-		$this->applicationFactory->registerObject(
-			'Settings',
-			Settings::newFromArray( $parameters['settings'] )
-		);
+		$this->applicationFactory->getSettings()->overrideWith( $parameters['settings'] );
 
 		$instance = new NewRevisionFromEditComplete(
 			$parameters['wikiPage'],
@@ -158,7 +154,8 @@ class NewRevisionFromEditCompleteTest extends \PHPUnit_Framework_TestCase {
 				'revision' => $this->newRevisionStub(),
 				'settings' => array(
 					'smwgPageSpecialProperties' => array( DIProperty::TYPE_MODIFICATION_DATE ),
-					'smwgDVFeatures' => ''
+					'smwgDVFeatures' => '',
+					'smwgCacheType'  => 'hash',
 				)
 			),
 			array(

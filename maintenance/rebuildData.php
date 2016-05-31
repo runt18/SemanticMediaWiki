@@ -167,7 +167,7 @@ class RebuildData extends \Maintenance {
 		$maintenanceHelper->reset();
 
 		// Only for internal use
-		// $this->reportMessage( "\n" . ApplicationFactory::getInstance()->getInMemoryPoolCache()->getFormattedStats() . "\n" );
+		// $this->reportMessage( "\n" . ApplicationFactory::getInstance()->getInMemoryPoolCache()->getStatsAsString() . "\n" );
 
 		return $result;
 	}

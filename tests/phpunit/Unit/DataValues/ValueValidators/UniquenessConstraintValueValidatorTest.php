@@ -104,7 +104,7 @@ class UniquenessConstraintValueValidatorTest extends \PHPUnit_Framework_TestCase
 			->will( $this->returnValue( $this->blobStore ) );
 
 		$cachedPropertyValuesPrefetcher->expects( $this->atLeastOnce() )
-			->method( 'queryPropertyValuesFor' )
+			->method( 'queryPropertyValuesWith' )
 			->will( $this->returnValue( array( $this->dataItemFactory->newDIWikiPage( 'UV', NS_MAIN ) ) ) );
 
 		$this->propertySpecificationLookup->expects( $this->once() )

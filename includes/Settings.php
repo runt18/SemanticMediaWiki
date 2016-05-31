@@ -200,6 +200,17 @@ class Settings extends Options {
 	}
 
 	/**
+	 * @since 2.5
+	 *
+	 * @param array $settings
+	 */
+	public function overrideWith( array $settings ) {
+		foreach ( $settings as $key => $value ) {
+			$this->set( $key, $value );
+		}
+	}
+
+	/**
 	 * Returns settings for a given key (nested settings are supported)
 	 *
 	 * @par Example:

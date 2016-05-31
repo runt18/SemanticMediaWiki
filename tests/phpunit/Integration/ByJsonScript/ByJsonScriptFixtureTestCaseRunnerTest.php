@@ -93,7 +93,7 @@ class ByJsonScriptFixtureTestCaseRunnerTest extends ByJsonTestCaseProvider {
 		$this->testEnvironment->resetMediaWikiService( '_MediaWikiTitleCodec' );
 		$this->testEnvironment->resetMediaWikiService( 'TitleParser' );
 
-		$this->testEnvironment->resetPoolCacheFor( \SMW\PropertySpecificationLookup::POOLCACHE_ID );
+		$this->testEnvironment->resetPoolCacheBy( \SMW\PropertySpecificationLookup::POOLCACHE_ID );
 
 		// Make sure LocalSettings don't interfere with the default settings
 		$GLOBALS['smwgDVFeatures'] = $GLOBALS['smwgDVFeatures'] & ~SMW_DV_NUMV_USPACE;

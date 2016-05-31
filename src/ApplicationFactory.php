@@ -157,12 +157,22 @@ class ApplicationFactory {
 	}
 
 	/**
+	 * @deprecated since 2.5, use ApplicationFactory::getCacheFactory
 	 * @since 2.2
 	 *
 	 * @return CacheFactory
 	 */
 	public function newCacheFactory() {
-		return $this->callbackLoader->load( 'CacheFactory', $this->getSettings()->get( 'smwgCacheType' ) );
+		return $this->getCacheFactory();
+	}
+
+	/**
+	 * @since 2.2
+	 *
+	 * @return CacheFactory
+	 */
+	public function getCacheFactory() {
+		return $this->callbackLoader->singleton( 'CacheFactory' );
 	}
 
 	/**

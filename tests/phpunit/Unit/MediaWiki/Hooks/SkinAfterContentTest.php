@@ -79,7 +79,7 @@ class SkinAfterContentTest extends \PHPUnit_Framework_TestCase {
 			$cachedFactbox = $this->applicationFactory->newFactboxFactory()->newCachedFactbox();
 
 			$cachedFactbox->addContentToCache(
-				$this->applicationFactory->newCacheFactory()->getFactboxCacheKey( $parameters['title']->getArticleID() ),
+				$this->applicationFactory->getCacheFactory()->getFactboxCacheKeyBy( $parameters['title']->getArticleID() ),
 				$parameters['text']
 			);
 

@@ -77,7 +77,7 @@ abstract class MwDBaseUnitTestCase extends \PHPUnit_Framework_TestCase {
 
 		ApplicationFactory::getInstance()->registerObject(
 			'Cache',
-			ApplicationFactory::getInstance()->newCacheFactory()->newFixedInMemoryCache()
+			ApplicationFactory::getInstance()->getCacheFactory()->newFixedInMemoryCache()
 		);
 
 		$this->testEnvironment->clearPendingDeferredUpdates();

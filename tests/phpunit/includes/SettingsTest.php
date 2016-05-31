@@ -116,6 +116,19 @@ class SettingsTest extends SemanticMediaWikiTestCase {
 		);
 	}
 
+	public function testOverrideWith() {
+
+		$instance = $this->newInstance( array() );
+
+		$instance->set( 'foo', 123 );
+		$instance->overrideWith( array( 'foo' => 456 ) );
+
+		$this->assertEquals(
+			456,
+			$instance->get( 'foo' )
+		);
+	}
+
 	/**
 	 * @dataProvider globalsSettingsProvider
 	 *

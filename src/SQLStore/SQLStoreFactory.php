@@ -226,7 +226,7 @@ class SQLStoreFactory {
 	 */
 	public function newCachedListLookup( ListLookup $listLookup, $useCache, $cacheExpiry ) {
 
-		$cacheFactory = $this->applicationFactory->newCacheFactory();
+		$cacheFactory = $this->applicationFactory->getCacheFactory();
 
 		$cacheOptions = $cacheFactory->newCacheOptions( array(
 			'useCache' => $useCache,
@@ -288,9 +288,9 @@ class SQLStoreFactory {
 		$circularReferenceGuard = new CircularReferenceGuard( 'vl:store' );
 		$circularReferenceGuard->setMaxRecursionDepth( 2 );
 
-		$cacheFactory = $this->applicationFactory->newCacheFactory();
+		$cacheFactory = $this->applicationFactory->getCacheFactory();
 
-		$blobStore = $cacheFactory->newBlobStore(
+		$blobStore = $cacheFactory->newBlobStoreWith(
 			'smw:vl:store',
 			$settings->get( 'smwgValueLookupCacheType' ),
 			$settings->get( 'smwgValueLookupCacheLifetime' )

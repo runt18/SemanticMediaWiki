@@ -200,7 +200,7 @@ class RedirectLookupTest extends \PHPUnit_Framework_TestCase {
 		$dataItem = new DIWikiPage( 'Foo', NS_MAIN );
 		$expNsResource = new ExpNsResource( 'Foo', 'Bar', '', $dataItem );
 
-		$poolCache = InMemoryPoolCache::getInstance()->getPoolCacheFor( 'sparql.store.redirectlookup' );
+		$poolCache = InMemoryPoolCache::getInstance()->getPoolCacheById( 'sparql.store.redirectlookup' );
 
 		$poolCache->save(
 			$expNsResource->getUri(),

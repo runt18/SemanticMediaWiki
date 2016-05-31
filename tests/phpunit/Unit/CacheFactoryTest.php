@@ -3,6 +3,9 @@
 namespace SMW\Tests;
 
 use SMW\CacheFactory;
+use SMW\ShadowCache;
+use Onoi\Cache\NullCache;
+use Onoi\Cache\Cache;
 
 /**
  * @covers \SMW\CacheFactory
@@ -116,7 +119,22 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf(
 			'Onoi\BlobStore\BlobStore',
-			$instance->newBlobStore( 'foo', CACHE_NONE )
+			$instance->newBlobStoreWith( 'foo', CACHE_NONE )
+		);
+	}
+
+	public function testCanConstructCacheByType() {
+
+		$instance = new CacheFactory();
+
+		$this->assertInstanceOf(
+			NullCache::class,
+			$instance->newCacheByType( CACHE_NONE )
+		);
+
+		$this->assertInstanceOf(
+			Cache::class,
+			$instance->newCacheByType( 'hash' )
 		);
 	}
 

@@ -37,7 +37,7 @@ class ArticlePurgeTest extends \PHPUnit_Framework_TestCase {
 
 		$this->applicationFactory->registerObject( 'Settings', $settings );
 
-		$this->cache = $this->applicationFactory->newCacheFactory()->newFixedInMemoryCache();
+		$this->cache = $this->applicationFactory->getCacheFactory()->newFixedInMemoryCache();
 		$this->applicationFactory->registerObject( 'Cache', $this->cache );
 	}
 
@@ -79,9 +79,9 @@ class ArticlePurgeTest extends \PHPUnit_Framework_TestCase {
 
 		$instance = new ArticlePurge();
 
-		$cacheFactory = $this->applicationFactory->newCacheFactory();
-		$factboxCacheKey = $cacheFactory->getFactboxCacheKey( $pageId );
-		$purgeCacheKey = $cacheFactory->getPurgeCacheKey( $pageId );
+		$cacheFactory = $this->applicationFactory->getCacheFactory();
+		$factboxCacheKey = $cacheFactory->getFactboxCacheKeyBy( $pageId );
+		$purgeCacheKey = $cacheFactory->getAuPurgeCacheKeyBy( $pageId );
 
 		$this->assertEquals(
 			$expected['autorefreshPreProcess'],

@@ -7,7 +7,6 @@ use ReflectionClass;
 use SMW\ApplicationFactory;
 use SMW\Factbox\Factbox;
 use SMW\ParserData;
-use SMW\Settings;
 use Title;
 
 /**
@@ -49,15 +48,16 @@ class FactboxMagicWordsTest extends \PHPUnit_Framework_TestCase {
 		$title  = Title::newFromText( __METHOD__ );
 		$parserOutput = new ParserOutput();
 
-		$settings = Settings::newFromArray( array(
+		$settings = array(
 			'smwgNamespacesWithSemanticLinks' => array( $title->getNamespace() => true ),
 			'smwgEnabledInTextAnnotationParserStrictMode' => true,
 			'smwgLinksInValues' => false,
 			'smwgInlineErrors'  => true,
-			)
+			'smwgCacheType'     => 'hash',
+			'smwgDVFeatures' => ''
 		);
 
-		$this->applicationFactory->registerObject( 'Settings', $settings );
+		$this->applicationFactory->getSettings()->overrideWith( $settings );
 
 		$parserData = new ParserData( $title, $parserOutput );
 
@@ -78,13 +78,12 @@ class FactboxMagicWordsTest extends \PHPUnit_Framework_TestCase {
 
 		$title = Title::newFromText( __METHOD__ );
 
-		$settings = Settings::newFromArray( array(
+		$settings = array(
 			'smwgShowFactboxEdit' => SMW_FACTBOX_HIDDEN,
 			'smwgShowFactbox'     => SMW_FACTBOX_HIDDEN
-			)
 		);
 
-		$this->applicationFactory->registerObject( 'Settings', $settings );
+		$this->applicationFactory->getSettings()->overrideWith( $settings );
 
 		$parserOutput = $this->getMockBuilder( '\ParserOutput' )
 			->disableOriginalConstructor()

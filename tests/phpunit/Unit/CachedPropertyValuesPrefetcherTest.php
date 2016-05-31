@@ -94,7 +94,7 @@ class CachedPropertyValuesPrefetcherTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(
 			$expected,
-			$instance->queryPropertyValuesFor( $query )
+			$instance->queryPropertyValuesWith( $query )
 		);
 	}
 

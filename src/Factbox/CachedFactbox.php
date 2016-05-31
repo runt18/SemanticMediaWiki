@@ -51,7 +51,7 @@ class CachedFactbox {
 	public function __construct( Cache $cache = null, \stdClass $cacheOptions ) {
 		$this->cache = $cache;
 		$this->cacheOptions = $cacheOptions;
-		$this->cacheFactory = ApplicationFactory::getInstance()->newCacheFactory();
+		$this->cacheFactory = ApplicationFactory::getInstance()->getCacheFactory();
 
 		if ( $this->cache === null ) {
 			$this->cache = $this->cacheFactory->newNullCache();
@@ -96,7 +96,7 @@ class CachedFactbox {
 		$title = $outputPage->getTitle();
 		$revisionId = $this->getRevisionId( $title, $outputPage->getContext() );
 
-		$key = $this->cacheFactory->getFactboxCacheKey(
+		$key = $this->cacheFactory->getFactboxCacheKeyBy(
 			$title->getArticleID()
 		);
 
@@ -167,7 +167,7 @@ class CachedFactbox {
 			$text = $outputPage->mSMWFactboxText;
 		} elseif ( $title instanceof Title ) {
 
-			$key = $this->cacheFactory->getFactboxCacheKey(
+			$key = $this->cacheFactory->getFactboxCacheKeyBy(
 				$title->getArticleID()
 			);
 

@@ -46,7 +46,7 @@ class EventListenerRegistry implements EventListenerCollection {
 				$applicationFactory = ApplicationFactory::getInstance();
 
 				$applicationFactory->getCache()->delete(
-					$applicationFactory->newCacheFactory()->getFactboxCacheKey( $title->getArticleID() )
+					$applicationFactory->getCacheFactory()->getFactboxCacheKeyBy( $title->getArticleID() )
 				);
 			}
 		);
@@ -122,7 +122,7 @@ class EventListenerRegistry implements EventListenerCollection {
 
 				$applicationFactory = ApplicationFactory::getInstance();
 
-				$poolCache = $applicationFactory->getInMemoryPoolCache()->getPoolCacheFor(
+				$poolCache = $applicationFactory->getInMemoryPoolCache()->getPoolCacheById(
 					'store.redirectTarget.lookup'
 				);
 

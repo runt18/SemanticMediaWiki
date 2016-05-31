@@ -30,9 +30,9 @@ class CachedFactboxTest extends \PHPUnit_Framework_TestCase {
 		parent::setUp();
 
 		$this->applicationFactory = ApplicationFactory::getInstance();
-		$this->memoryCache = $this->applicationFactory->newCacheFactory()->newFixedInMemoryCache();
+		$this->memoryCache = $this->applicationFactory->getCacheFactory()->newFixedInMemoryCache();
 
-		$this->cacheOptions = $this->applicationFactory->newCacheFactory()->newCacheOptions( array(
+		$this->cacheOptions = $this->applicationFactory->getCacheFactory()->newCacheOptions( array(
 			'useCache' => true,
 			'ttl' => 0
 		) );

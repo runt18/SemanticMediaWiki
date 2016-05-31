@@ -37,7 +37,7 @@ class PropertySpecificationLookupTest extends \PHPUnit_Framework_TestCase {
 		$this->dataItemFactory = new DataItemFactory();
 		$this->testEnvironment = new TestEnvironment();
 
-		$this->testEnvironment->resetPoolCacheFor( PropertySpecificationLookup::POOLCACHE_ID );
+		$this->testEnvironment->resetPoolCacheBy( PropertySpecificationLookup::POOLCACHE_ID );
 	}
 
 	public function testCanConstruct() {
@@ -53,7 +53,7 @@ class PropertySpecificationLookupTest extends \PHPUnit_Framework_TestCase {
 		$property = $this->dataItemFactory->newDIProperty( 'Foo' );
 
 		$this->cachedPropertyValuesPrefetcher->expects( $this->once() )
-			->method( 'queryPropertyValuesFor' )
+			->method( 'queryPropertyValuesWith' )
 			->will( $this->returnValue( array( $this->dataItemFactory->newDIWikiPage( 'Foo' ) ) ) );
 
 		$instance = new PropertySpecificationLookup(

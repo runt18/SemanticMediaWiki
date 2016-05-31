@@ -137,10 +137,7 @@ class InternalParseBeforeLinksTest extends \PHPUnit_Framework_TestCase {
 			$text
 		);
 
-		$this->applicationFactory->registerObject(
-			'Settings',
-			Settings::newFromArray( $parameters['settings'] )
-		);
+		$this->applicationFactory->getSettings()->overrideWith( $parameters['settings'] );
 
 		$this->assertTrue( $instance->process() );
 		$this->assertEquals( $expected['resultText'], $text );

@@ -37,7 +37,7 @@ class RedirectLookup {
 	 * @since 2.1
 	 */
 	public static function reset() {
-		InMemoryPoolCache::getInstance()->resetPoolCacheFor( 'sparql.store.redirectlookup' );
+		InMemoryPoolCache::getInstance()->resetPoolCacheBy( 'sparql.store.redirectlookup' );
 	}
 
 	/**
@@ -86,7 +86,7 @@ class RedirectLookup {
 
 	private function doLookupResourceUriTargetFor( ExpNsResource $expNsResource ) {
 
-		$poolCache = InMemoryPoolCache::getInstance()->getPoolCacheFor( 'sparql.store.redirectlookup' );
+		$poolCache = InMemoryPoolCache::getInstance()->getPoolCacheById( 'sparql.store.redirectlookup' );
 
 		if ( !$poolCache->contains( $expNsResource->getUri() ) ) {
 			$poolCache->save(

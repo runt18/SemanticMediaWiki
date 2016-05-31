@@ -45,7 +45,7 @@ class InMemoryPoolCache {
 	public static function getInstance() {
 
 		if ( self::$instance === null ) {
-			self::$instance = new self( ApplicationFactory::getInstance()->newCacheFactory() );
+			self::$instance = new self( ApplicationFactory::getInstance()->getCacheFactory() );
 		}
 
 		return self::$instance;
@@ -63,7 +63,7 @@ class InMemoryPoolCache {
 	 *
 	 * @param string $poolCacheName
 	 */
-	public function resetPoolCacheFor( $poolCacheName = '' ) {
+	public function resetPoolCacheBy( $poolCacheName = '' ) {
 		foreach ( $this->poolCacheList as $key => $value ) {
 			if ( $key === $poolCacheName || $poolCacheName === '' ) {
 				unset( $this->poolCacheList[$key] );
@@ -92,7 +92,7 @@ class InMemoryPoolCache {
 	 *
 	 * @return string
 	 */
-	public function getFormattedStats() {
+	public function getStatsAsString() {
 
 		$stats = '';
 		ksort( $this->poolCacheList );
@@ -127,6 +127,7 @@ class InMemoryPoolCache {
 	}
 
 	/**
+	 * @deprecated since 2.5, use InMemoryPoolCache::getPoolCacheById
 	 * @since 2.3
 	 *
 	 * @param string $poolCacheName
@@ -139,7 +140,7 @@ class InMemoryPoolCache {
 	}
 
 	/**
-	 * @since 2.3
+	 * @since 2.5
 	 *
 	 * @param string $poolCacheId
 	 * @param integer $cacheSize

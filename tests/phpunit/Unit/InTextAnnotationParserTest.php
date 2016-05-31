@@ -9,7 +9,6 @@ use SMW\InTextAnnotationParser;
 use SMW\MediaWiki\MagicWordsFinder;
 use SMW\MediaWiki\RedirectTargetFinder;
 use SMW\ParserData;
-use SMW\Settings;
 use SMW\Tests\TestEnvironment;
 use Title;
 
@@ -118,10 +117,7 @@ class InTextAnnotationParserTest extends \PHPUnit_Framework_TestCase {
 			isset( $settings['smwgEnabledInTextAnnotationParserStrictMode'] ) ? $settings['smwgEnabledInTextAnnotationParserStrictMode'] : true
 		);
 
-		$this->testEnvironment->registerObject(
-			'Settings',
-			Settings::newFromArray( $settings )
-		);
+		$this->testEnvironment->withConfiguration( $settings );
 
 		$instance->parse( $text );
 
@@ -151,13 +147,10 @@ class InTextAnnotationParserTest extends \PHPUnit_Framework_TestCase {
 			'smwgNamespacesWithSemanticLinks' => array( $namespace => true ),
 			'smwgLinksInValues' => false,
 			'smwgInlineErrors'  => true,
+			'smwgCacheType'     => 'hash'
 		);
 
-
-		$this->testEnvironment->registerObject(
-			'Settings',
-			Settings::newFromArray( $settings )
-		);
+		$this->testEnvironment->withConfiguration( $settings );
 
 		$parserData = new ParserData(
 			Title::newFromText( __METHOD__, $namespace ),
@@ -196,12 +189,10 @@ class InTextAnnotationParserTest extends \PHPUnit_Framework_TestCase {
 			'smwgNamespacesWithSemanticLinks' => array( $namespace => true ),
 			'smwgLinksInValues' => false,
 			'smwgInlineErrors'  => true,
+			'smwgCacheType'     => 'hash'
 		);
 
-		$this->testEnvironment->registerObject(
-			'Settings',
-			Settings::newFromArray( $settings )
-		);
+		$this->testEnvironment->withConfiguration( $settings );
 
 		$parserData = new ParserData(
 			Title::newFromText( __METHOD__, $namespace ),

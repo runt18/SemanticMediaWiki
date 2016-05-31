@@ -43,14 +43,14 @@ class InMemoryPoolCacheTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf(
 			'\Onoi\Cache\Cache',
-			$instance->getPoolCacheFor( 'Foo' )
+			$instance->getPoolCacheById( 'Foo' )
 		);
 
-		$instance->getPoolCacheFor( 'Foo' )->save( 'Bar', 42 );
+		$instance->getPoolCacheById( 'Foo' )->save( 'Bar', 42 );
 
 		$this->assertEquals(
 			42,
-			$instance->getPoolCacheFor( 'Foo' )->fetch( 'Bar' )
+			$instance->getPoolCacheById( 'Foo' )->fetch( 'Bar' )
 		);
 
 		$this->assertNotEmpty(
@@ -59,10 +59,10 @@ class InMemoryPoolCacheTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInternalType(
 			'string',
-			$instance->getFormattedStats()
+			$instance->getStatsAsString()
 		);
 
-		$instance->resetPoolCacheFor( 'Foo' );
+		$instance->resetPoolCacheBy( 'Foo' );
 
 		$this->assertEmpty(
 			$instance->getStats()

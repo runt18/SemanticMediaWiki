@@ -22,7 +22,7 @@ class FactboxFactory {
 	 */
 	public function newCachedFactbox() {
 
-		$cacheFactory = ApplicationFactory::getInstance()->newCacheFactory();
+		$cacheFactory = ApplicationFactory::getInstance()->getCacheFactory();
 
 		$cacheOptions = $cacheFactory->newCacheOptions( array(
 			'useCache' => ApplicationFactory::getInstance()->getSettings()->get( 'smwgFactboxUseCache' ),

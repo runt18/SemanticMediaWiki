@@ -34,7 +34,7 @@ class CacheFactory {
 		$this->mainCacheType = $mainCacheType;
 
 		if ( $this->mainCacheType === null ) {
-			$this->mainCacheType = $GLOBALS['smwgMainCacheType'];
+			$this->mainCacheType = ApplicationFactory::getInstance()->getSettings()->get( 'smwgMainCacheType' );
 		}
 	}
 
@@ -63,7 +63,7 @@ class CacheFactory {
 	 *
 	 * @return string
 	 */
-	public function getFactboxCacheKey( $key ) {
+	public function getFactboxCacheKeyBy( $key ) {
 		return $this->getCachePrefix() . ':smw:fc:' . md5( $key );
 	}
 
@@ -74,7 +74,7 @@ class CacheFactory {
 	 *
 	 * @return string
 	 */
-	public function getPurgeCacheKey( $key ) {
+	public function getAuPurgeCacheKeyBy( $key ) {
 		return $this->getCachePrefix() . ':smw:arc:' . md5( $key );
 	}
 
@@ -124,16 +124,44 @@ class CacheFactory {
 	 */
 	public function newMediaWikiCompositeCache( $mediaWikiCacheType = null ) {
 
+		$compositeCache = OnoiCacheFactory::getInstance()->newCompositeCache( array(
+			$this->newFixedInMemoryCache( 500 ),
+			$this->newMediaWikiCache( $mediaWikiCacheType )
+		) );
+
+		return $compositeCache;
+	}
+
+	/**
+	 * @since 2.5
+	 *
+	 * @param integer|string $mediaWikiCacheType
+	 *
+	 * @return Cache
+	 */
+	public function newMediaWikiCache( $mediaWikiCacheType = null ) {
+
 		$mediaWikiCache = ObjectCache::getInstance(
 			( $mediaWikiCacheType === null ? $this->getMainCacheType() : $mediaWikiCacheType )
 		);
 
-		$compositeCache = OnoiCacheFactory::getInstance()->newCompositeCache( array(
-			$this->newFixedInMemoryCache( 500 ),
-			OnoiCacheFactory::getInstance()->newMediaWikiCache( $mediaWikiCache )
-		) );
+		return OnoiCacheFactory::getInstance()->newMediaWikiCache( $mediaWikiCache );
+	}
 
-		return $compositeCache;
+	/**
+	 * @since 2.5
+	 *
+	 * @param integer|null $cacheType
+	 *
+	 * @return Cache
+	 */
+	public function newCacheByType( $cacheType = null ) {
+
+		if ( $cacheType === CACHE_NONE || $cacheType === null ) {
+			return $this->newNullCache();
+		}
+
+		return $this->newMediaWikiCache( $cacheType );
 	}
 
 	/**
@@ -145,7 +173,7 @@ class CacheFactory {
 	 *
 	 * @return BlobStore
 	 */
-	public function newBlobStore( $namespace, $cacheType = null, $cacheLifetime = 0 ) {
+	public function newBlobStoreWith( $namespace, $cacheType = null, $cacheLifetime = 0 ) {
 
 		$blobStore = $this->callbackInstantiator->load( 'BlobStore', $namespace, $cacheType, $cacheLifetime );
 

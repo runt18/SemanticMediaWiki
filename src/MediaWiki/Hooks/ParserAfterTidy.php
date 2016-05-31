@@ -143,7 +143,7 @@ class ParserAfterTidy {
 		$cache = $this->applicationFactory->getCache();
 		$start = microtime( true );
 
-		$key = $this->applicationFactory->newCacheFactory()->getPurgeCacheKey(
+		$key = $this->applicationFactory->getCacheFactory()->getAuPurgeCacheKeyBy(
 			$this->parser->getTitle()->getArticleID()
 		);
 

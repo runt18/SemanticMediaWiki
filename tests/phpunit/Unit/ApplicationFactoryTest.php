@@ -193,7 +193,7 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf(
 			'\SMW\CacheFactory',
-			$this->applicationFactory->newCacheFactory()
+			$this->applicationFactory->getCacheFactory()
 		);
 	}
 

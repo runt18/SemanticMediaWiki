@@ -41,7 +41,7 @@ class PropertySpecificationLookup {
 	 */
 	public function __construct( CachedPropertyValuesPrefetcher $cachedPropertyValuesPrefetcher ) {
 		$this->cachedPropertyValuesPrefetcher = $cachedPropertyValuesPrefetcher;
-		$this->intermediaryMemoryCache = ApplicationFactory::getInstance()->getInMemoryPoolCache()->getPoolCacheFor( self::POOLCACHE_ID );
+		$this->intermediaryMemoryCache = ApplicationFactory::getInstance()->getInMemoryPoolCache()->getPoolCacheById( self::POOLCACHE_ID );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class PropertySpecificationLookup {
 		$query = new Query( $description );
 		$query->setLimit( 1 );
 
-		$dataItems = $this->cachedPropertyValuesPrefetcher->queryPropertyValuesFor(
+		$dataItems = $this->cachedPropertyValuesPrefetcher->queryPropertyValuesWith(
 			$query
 		);
 

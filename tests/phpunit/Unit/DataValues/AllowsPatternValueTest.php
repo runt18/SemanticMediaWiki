@@ -38,7 +38,7 @@ class AllowsPatternValueTest extends \PHPUnit_Framework_TestCase {
 			->getMock();
 
 		$this->testEnvironment->registerObject( 'PropertySpecificationLookup', $this->propertySpecificationLookup );
-	//	$this->testEnvironment->resetPoolCacheFor( 'pvap.no.pattern.cache' );
+	//	$this->testEnvironment->resetPoolCacheBy( 'pvap.no.pattern.cache' );
 	}
 
 	protected function tearDown() {

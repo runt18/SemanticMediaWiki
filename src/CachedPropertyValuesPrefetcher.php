@@ -103,7 +103,7 @@ class CachedPropertyValuesPrefetcher {
 	 *
 	 * @return array
 	 */
-	public function queryPropertyValuesFor( Query $query ) {
+	public function queryPropertyValuesWith( Query $query ) {
 		return $this->store->getQueryResult( $query )->getResults();
 	}
 

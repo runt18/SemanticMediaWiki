@@ -70,7 +70,7 @@ class MediaWikiIntegrationForRegisteredHookTest extends MwDBaseUnitTestCase {
 
 	public function testPagePurge() {
 
-		$cacheFactory = $this->applicationFactory->newCacheFactory();
+		$cacheFactory = $this->applicationFactory->getCacheFactory();
 		$cache = $cacheFactory->newFixedInMemoryCache();
 
 		$this->applicationFactory->registerObject( 'Cache', $cache );
@@ -83,7 +83,7 @@ class MediaWikiIntegrationForRegisteredHookTest extends MwDBaseUnitTestCase {
 			->createPage( $this->title )
 			->doEdit( '[[Has function hook test::page purge]]' );
 
-		$key = $cacheFactory->getPurgeCacheKey( $this->title->getArticleID() );
+		$key = $cacheFactory->getAuPurgeCacheKeyBy( $this->title->getArticleID() );
 
 		$pageCreator
 			->getPage()

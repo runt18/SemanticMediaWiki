@@ -150,7 +150,7 @@ class UniquenessConstraintValueValidator implements ConstraintValueValidator {
 		$query = $this->queryFactory->newQuery( $description );
 		$query->setLimit( 1 );
 
-		$dataItems = $this->cachedPropertyValuesPrefetcher->queryPropertyValuesFor(
+		$dataItems = $this->cachedPropertyValuesPrefetcher->queryPropertyValuesWith(
 			$query
 		);
 
