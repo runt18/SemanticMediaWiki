@@ -1,0 +1,31 @@
+{
+	"name": "SemanticMediaWiki",
+	"version": "3.0.0-alpha",
+	"author": [
+        "[https://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]",
+        "James Hong Kong",
+        "[http://korrekt.org Markus Krötzsch]",
+        "[https://www.semantic-mediawiki.org/wiki/Contributors ...]"
+	],
+	"url": "https://www.semantic-mediawiki.org",
+	"descriptionmsg": "smw-desc",
+	"license-name": "GPL-2.0+",
+	"type": "semantic",
+	"requires": {
+		"MediaWiki": ">= 1.27"
+	},
+	"MessagesDirs": {
+		"SemanticMediaWiki": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"SemanticMediaWiki": "SemanticMediaWiki.php"
+	},
+	"callback": "SemanticMediaWiki::initExtension",
+	"ExtensionFunctions": [
+		"SemanticMediaWiki::onExtensionFunction"
+	],
+	"load_composer_autoloader":true,
+	"manifest_version": 1
+}
