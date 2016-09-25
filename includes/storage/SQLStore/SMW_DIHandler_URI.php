@@ -13,13 +13,15 @@
  */
 class SMWDIHandlerUri extends SMWDataItemHandler {
 
+	const MAX_LENGTH = 255;
+
 	/**
 	 * Method to return array of fields for a DI type
 	 *
 	 * @return array
 	 */
 	public function getTableFields() {
-		return array( 'o_serialized' => 't' );
+		return array( 'o_blob' => 'l', 'o_serialized' => 't' );
 	}
 
 	/**
@@ -29,7 +31,7 @@ class SMWDIHandlerUri extends SMWDataItemHandler {
 	 * @return array
 	 */
 	public function getFetchFields() {
-		return array( 'o_serialized' => 't' );
+		return array( 'o_blob' => 'l', 'o_serialized' => 't' );
 	}
 
 	/**
@@ -38,7 +40,7 @@ class SMWDIHandlerUri extends SMWDataItemHandler {
 	 * @return array
 	 */
 	public function getWhereConds( SMWDataItem $dataItem ) {
-		return array( 'o_serialized' => $dataItem->getSerialization() );
+		return array( 'o_serialized' => rawurldecode( $dataItem->getSerialization() ) );
 	}
 
 	/**
@@ -49,7 +51,19 @@ class SMWDIHandlerUri extends SMWDataItemHandler {
 	 * @return array
 	 */
 	public function getInsertValues( SMWDataItem $dataItem ) {
-		return array( 'o_serialized' => $dataItem->getSerialization() );
+
+		$serialization = rawurldecode( $dataItem->getSerialization() );
+		$text = mb_strlen( $serialization ) <= self::MAX_LENGTH ? null : $serialization;
+
+		// bytea type handling
+		if ( $text !== null && $GLOBALS['wgDBtype'] === 'postgres' ) {
+			$text = pg_escape_bytea( $text );
+		}
+
+		return array(
+			'o_blob' => $text,
+			'o_serialized' => $serialization,
+		);
 	}
 
 	/**
@@ -79,10 +93,16 @@ class SMWDIHandlerUri extends SMWDataItemHandler {
 	 * @return SMWDataItem
 	 */
 	public function dataItemFromDBKeys( $dbkeys ) {
-		if ( is_string( $dbkeys ) ) {
-			return SMWDIUri::doUnserialize( $dbkeys );
-		} else {
+
+		if ( !is_array( $dbkeys ) || count( $dbkeys ) != 2 ) {
 			throw new SMWDataItemException( 'Failed to create data item from DB keys.' );
 		}
+
+		if ( $GLOBALS['wgDBtype'] === 'postgres' ) {
+			$dbkeys[0] = pg_unescape_bytea( $dbkeys[0] );
+		}
+
+		return SMWDIUri::doUnserialize( $dbkeys[0] == '' ? $dbkeys[1] : $dbkeys[0] );
 	}
+
 }
