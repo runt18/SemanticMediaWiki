@@ -138,4 +138,16 @@ class PropertyLabelFinderTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
+	public function testABC() {
+
+		$instance = new PropertyLabelFinder(
+			$this->store
+		);
+
+		$this->assertEquals(
+			array(),
+			$instance->queryPropertyListFromPreferredLabelWithLanguageCode( '~*unknownProp*', 'ja' )
+		);
+	}
+
 }

@@ -50,6 +50,11 @@ class SMWPropertyValue extends SMWDataValue {
 	protected $linkAttributes = array();
 
 	/**
+	 * @var string
+	 */
+	private $preferredLabel = '';
+
+	/**
 	 * Cache for type value of this property, or null if not calculated yet.
 	 * @var SMWTypesValue
 	 */
@@ -136,10 +141,6 @@ class SMWPropertyValue extends SMWDataValue {
 		$this->mPropTypeValue = null;
 		$this->m_wikipage = null;
 
-		if ( $this->m_caption === false ) { // always use this as caption
-			$this->m_caption = $value;
-		}
-
 		list( $propertyName, $inverse ) = $this->doNormalizeUserValue(
 			$value
 		);
@@ -162,10 +163,23 @@ class SMWPropertyValue extends SMWDataValue {
 			$this->m_dataitem = $dataItem ? $dataItem : $this->m_dataitem;
 		}
 
+		// Copy the original DI to ensure we can compare it against a possible redirect
 		$this->inceptiveProperty = $this->m_dataitem;
 
 		if ( $this->isEnabledFeature( SMW_DV_PROV_REDI ) ) {
 			$this->m_dataitem = $this->m_dataitem->getRedirectTarget();
+		}
+
+		// If not external caption has been invoked, try to replace it with a preferred label
+		if ( $this->m_caption === false || $this->m_caption === '' ) {
+			$this->preferredLabel = $this->m_dataitem->getPreferredLabel( $this->getOptionBy( self::OPT_USER_LANGUAGE ) );
+		}
+
+		// Use the preferred label as eligible caption, if available
+		if ( $this->preferredLabel !== '' ) {
+			$this->m_caption = $this->preferredLabel;
+		} elseif ( $this->m_caption === false ) {
+			$this->m_caption = $value;
 		}
 	}
 
@@ -182,11 +196,16 @@ class SMWPropertyValue extends SMWDataValue {
 
 		$this->inceptiveProperty = $dataItem;
 		$this->m_dataitem = $dataItem;
+		$this->preferredLabel = $this->m_dataitem->getPreferredLabel();
 
 		$this->mPropTypeValue = null;
 		unset( $this->m_wikipage );
 		$this->m_caption = false;
 		$this->linkAttributes = array();
+
+		if ( $this->preferredLabel !== '' ) {
+			$this->m_caption = $this->preferredLabel;
+		}
 
 		return true;
 	}
@@ -255,7 +274,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 * @note Every user defined property is necessarily visible.
 	 */
 	public function isVisible() {
-		return $this->isValid() && ( $this->m_dataitem->isUserDefined() || $this->m_dataitem->getLabel() !== '' );
+		return $this->isValid() && ( $this->m_dataitem->isUserDefined() || $this->m_dataitem->getCanonicalLabel() !== '' );
 	}
 
 	/**
@@ -267,50 +286,106 @@ class SMWPropertyValue extends SMWDataValue {
 		return $this->isValid() && $this->m_dataitem->isUnrestricted();
 	}
 
-	public function getShortWikiText( $linked = null ) {
+	public function getShortWikiText( $linker = null ) {
 
-		if ( $this->isVisible() ) {
-			$wikiPageValue = $this->getWikiPageValue();
-			return is_null( $wikiPageValue ) ? '' : $this->highlightText( $wikiPageValue->getShortWikiText( $linked ) );
+		if ( !$this->isVisible() ) {
+			return '';
 		}
 
-		return '';
+		$wikiPageValue = $this->getWikiPageValue();
+
+		if ( $wikiPageValue === null ) {
+			return '';
+		}
+
+		$label = $this->m_dataitem->getLabel();
+
+		if ( $this->m_caption !== false && $this->m_caption !== '' ) {
+			$wikiPageValue->setCaption( $this->m_caption );
+		} elseif ( $this->preferredLabel !== '' ) {
+			$wikiPageValue->setCaption( $this->preferredLabel );
+		} else {
+			$wikiPageValue->setCaption( $label );
+		}
+
+		return $this->highlightText( $wikiPageValue->getShortWikiText( $linker ) ) . $this->hintPreferredLabelUse( $label );
 	}
 
-	public function getShortHTMLText( $linked = null ) {
+	public function getShortHTMLText( $linker = null ) {
 
-		if ( $this->isVisible() ) {
-			$wikiPageValue = $this->getWikiPageValue();
-			return is_null( $wikiPageValue ) ? '' : $this->highlightText( $wikiPageValue->getShortHTMLText( $linked ), $linked );
+		if ( !$this->isVisible() ) {
+			return '';
 		}
 
-		return '';
+		$wikiPageValue = $this->getWikiPageValue();
+
+		if ( $wikiPageValue === null ) {
+			return '';
+		}
+
+		$label = $this->m_dataitem->getLabel();
+
+		if ( $this->m_caption !== false && $this->m_caption !== '' ) {
+			$wikiPageValue->setCaption( $this->m_caption );
+		} elseif ( $this->preferredLabel !== '' ) {
+			$wikiPageValue->setCaption( $this->preferredLabel );
+		} else {
+			$wikiPageValue->setCaption( $label );
+		}
+
+		return $this->highlightText( $wikiPageValue->getShortHTMLText( $linker ), $linker ) . $this->hintPreferredLabelUse( $label );
 	}
 
-	public function getLongWikiText( $linked = null ) {
+	public function getLongWikiText( $linker = null ) {
 
-		if ( $this->isVisible() ) {
-			$wikiPageValue = $this->getWikiPageValue();
-			return is_null( $wikiPageValue ) ? '' : $this->highlightText( $wikiPageValue->getLongWikiText( $linked ) );
+		if ( !$this->isVisible() ) {
+			return '';
 		}
 
-		return '';
+		$wikiPageValue = $this->getWikiPageValue();
+
+		if ( $wikiPageValue === null ) {
+			return '';
+		}
+
+		if ( $this->m_caption !== false && $this->m_caption !== '' ) {
+			$wikiPageValue->setCaption( $this->m_caption );
+		} elseif ( $this->preferredLabel !== '' ) {
+			$wikiPageValue->setCaption( $this->preferredLabel );
+		}
+
+		return $this->highlightText( $wikiPageValue->getLongWikiText( $linker ) );
 	}
 
-	public function getLongHTMLText( $linked = null ) {
+	public function getLongHTMLText( $linker = null ) {
 
-		if ( $this->isVisible() ) {
-			$wikiPageValue = $this->getWikiPageValue();
-			return is_null( $wikiPageValue ) ? '' : $this->highlightText( $wikiPageValue->getLongHTMLText( $linked ), $linked );
+		if ( !$this->isVisible() ) {
+			return '';
 		}
 
-		return '';
+		$wikiPageValue = $this->getWikiPageValue();
+
+		if ( $wikiPageValue === null ) {
+			return '';
+		}
+
+		if ( $this->m_caption !== false && $this->m_caption !== '' ) {
+			$wikiPageValue->setCaption( $this->m_caption );
+		} elseif ( $this->preferredLabel !== '' ) {
+			$wikiPageValue->setCaption( $this->preferredLabel );
+		}
+
+		return $this->highlightText( $wikiPageValue->getLongHTMLText( $linker ), $linker );
 	}
 
 	public function getWikiValue() {
 
 		if ( !$this->isVisible() ) {
 			return '';
+		}
+
+		if ( $this->preferredLabel !== '' ) {
+			return $this->preferredLabel;
 		}
 
 		if ( $this->getWikiPageValue() !== null && $this->getWikiPageValue()->getDisplayTitle() !== '' ) {
@@ -486,6 +561,24 @@ class SMWPropertyValue extends SMWDataValue {
 		}
 
 		return array( $propertyName, $inverse );
+	}
+
+	private function hintPreferredLabelUse( $label ) {
+
+		if ( !$this->isEnabledFeature( SMW_DV_PROV_LHNT ) ||
+			$this->preferredLabel === $this->m_dataitem->getCanonicalLabel() ||
+			$this->preferredLabel === '' ) {
+			return '';
+		}
+
+		$preferredLabelMarker = '';
+
+//		if ( $this->preferredLabel !== '' && $this->preferredLabel !== $label && $this->preferredLabel !== $canonicalLabel || $canonicalLabel !== $label ) {
+		if ( $this->preferredLabel !== $label ) {
+			$preferredLabelMarker = '&nbsp;' . \Html::rawElement( 'span', array( 'title' => $label ), '<sup>ᵖ</sup>' );
+		}
+
+		return $preferredLabelMarker;
 	}
 
 }

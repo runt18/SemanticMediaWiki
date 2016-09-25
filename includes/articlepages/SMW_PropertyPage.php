@@ -29,6 +29,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		$this->limit = $smwgPropertyPagingLimit;
 		$this->mProperty = DIProperty::newFromUserLabel( $this->mTitle->getText() );
 		$this->store = ApplicationFactory::getInstance()->getStore();
+		$this->propertyValue = DataValueFactory::getInstance()->newDataItemValue( $this->mProperty );
 		return true;
 	}
 
@@ -41,6 +42,12 @@ class SMWPropertyPage extends SMWOrderedListPage {
 
 		if ( !$this->store->getRedirectTarget( $this->mProperty )->equals( $this->mProperty ) ) {
 			return '';
+		}
+
+		if ( $this->propertyValue->getDataItem()->getPreferredLabel() !== '' && $this->mTitle->getText() !== $this->propertyValue->getDataItem()->getPreferredLabel() ) {
+			$this->getContext()->getOutput()->setPageTitle(
+				wfMessage( 'smw-property-preferred-title-format', $this->mTitle->getPrefixedText(), $this->propertyValue->getWikiValue() )->text()
+			);
 		}
 
 		$list = $this->getSubpropertyList() . $this->getPropertyValueList();
@@ -77,7 +84,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 			$messageKeyLong = 'smw-pa-property-predefined-long' . strtolower( $key );
 		}
 
-		$message .= wfMessage( $messageKey )->exists() ? wfMessage( $messageKey, $propertyName )->parse() : wfMessage( 'smw-pa-property-predefined-default' )->parse();
+		$message .= wfMessage( $messageKey )->exists() ? wfMessage( $messageKey, $propertyName )->parse() : wfMessage( 'smw-pa-property-predefined-default', $propertyName )->parse();
 		$message .= wfMessage( $messageKeyLong )->exists() ? ' ' . wfMessage( $messageKeyLong )->parse() : '';
 		$message .= ' ' . wfMessage( 'smw-pa-property-predefined-common' )->parse();
 

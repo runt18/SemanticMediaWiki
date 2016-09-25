@@ -1,4 +1,8 @@
 <?php
+
+use SMW\DIProperty;
+use SMW\DIWikiPage;
+
 /**
  * @author Nischay Nahata
  * @author Markus Kroetzsch
@@ -111,8 +115,8 @@ class SMWDIHandlerWikiPage extends SMWDataItemHandler {
 			if ( $namespace == SMW_NS_PROPERTY && $dbkeys[0] != '' &&
 				$dbkeys[0]{0} == '_' && $dbkeys[2] == '' ) {
 				// Correctly interpret internal property keys
-				$property = new SMW\DIProperty( $dbkeys[0] );
-				$wikipage = $property->getDiWikiPage( $dbkeys[4] );
+				$property = new DIProperty( $dbkeys[0] );
+				$wikipage = $property->getCanonicalDiWikiPage( $dbkeys[4] );
 				if ( !is_null( $wikipage ) ) {
 					return $wikipage;
 				}
@@ -126,7 +130,7 @@ class SMWDIHandlerWikiPage extends SMWDataItemHandler {
 
 	private function newDiWikiPage( $dbkeys ) {
 
-		$diWikiPage = new SMWDIWikiPage(
+		$diWikiPage = new DIWikiPage(
 			$dbkeys[0],
 			intval( $dbkeys[1] ),
 			$dbkeys[2],
